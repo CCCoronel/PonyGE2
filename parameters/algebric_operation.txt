@@ -1,0 +1,27 @@
+SEARCH LOOP:             search_loop
+STEP:                    step
+POPULATION_SIZE:         100
+GENERATIONS:             100
+DATASET_TRAIN:           Algebric_operation/Train.csv
+DEBUG:                   true
+GRAMMAR_FILE:            algebric_grammar/grammar_example.bnf
+ERROR_METRIC:            rmse
+CODON_SIZE:              256
+MAX_GENOME_LENGTH:       27
+INIT_GENOME_LENGTH:      27
+MAX_WRAPS:               3
+TOURNAMENT_SIZE:         5
+SELECTION_PROPORTION:    0.2
+CROSSOVER:               "operators.crossover.variable_onepoint"
+CROSSOVER_PROBABILITY:   1.0
+NO_CROSSOVER_INAVLIDS:   True
+MUTATION_PROBABILITY:    0.1
+MUTATION_EVENTS:         1
+NO_MUTATION_INVALIDS:    True
+ELITE_SIZE:              20
+VERBOSE:                 True
+DEBUG:                   True
+CACHE:                   True
+LOOKUP_FITNESS:          True
+RANDOM_SEED:             1234
+
