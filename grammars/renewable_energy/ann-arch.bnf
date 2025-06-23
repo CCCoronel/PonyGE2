@@ -1,0 +1,145 @@
+# --- Top Level ---
+
+<ann> ::= 'neuralnet' '{' <input-layer> <hidden-layers> <output-layer> '}'
+
+# --- Input Layer ---
+
+<input-layer> ::= 'input' '{' <units> <features> <seq-length> '}'
+
+# --- Output Layer ---
+
+<output-layer> ::= 'output' '{' <units> <activation> <opt-dropout> '}'
+
+# --- Layer Definitions ---
+
+<hidden-layers> ::= <final-layer> | <stackable-layer> <hidden-layers>
+
+# A layer that can be stacked (i.e., it's followed by another layer)
+<stackable-layer> ::= <stackable-lstm-layer> | <stackable-gru-layer> | <conv1d-layer> | <dense-layer> | <normalization-layer> | <pooling-layer>
+
+# A layer that must be at the end of the hidden stack (before the output)
+<final-layer> ::= <dense-layer> | <final-lstm-layer> | <final-gru-layer> | <conv1d-layer> | <tcn-layer> | <attention-layer> | <esn-layer>
+
+# --- Layer Implementations ---
+
+<dense-layer> ::= 'dense' '{' <units> <activation> <opt-dropout> <opt-regularization> <opt-weight-init> '}'
+
+<stackable-lstm-layer> ::= 'lstm' '{' <units> <activation> <return-seq-on> <recurrent-dropout> <opt-dropout> <opt-regularization> '}'
+
+<final-lstm-layer> ::= 'lstm' '{' <units> <activation> <return-seq-off> <recurrent-dropout> <opt-dropout> <opt-regularization> '}'
+
+<stackable-gru-layer> ::= 'gru' '{' <units> <activation> <return-seq-on> <recurrent-dropout> <opt-dropout> <opt-regularization> '}'
+
+<final-gru-layer> ::= 'gru' '{' <units> <activation> <return-seq-off> <recurrent-dropout> <opt-dropout> <opt-regularization> '}'
+
+<conv1d-layer> ::= 'conv1d' '{' <filters> <kernel-size> <strides> <padding> <dilation-rate> <activation> <opt-dropout> '}'
+
+<tcn-layer> ::= 'tcn' '{' <filters> <kernel-size> <dilations> <activation> <opt-dropout> '}'
+
+<attention-layer> ::= 'attention' '{' <units> <heads> <opt-dropout> '}'
+
+<esn-layer> ::= 'esn' '{' <units> <activation> <leak-rate> <spectral-radius> <input-scaling> '}'
+
+<pooling-layer> ::= <max-pooling> | <avg-pooling> | <global-pooling>
+
+<max-pooling> ::= 'maxpool1d' '{' <pool-size> <strides> '}'
+
+<avg-pooling> ::= 'avgpool1d' '{' <pool-size> <strides> '}'
+
+<global-pooling> ::= 'globalpool' '{' <pool-type> '}'
+
+<normalization-layer> ::= <batch-norm> | <layer-norm> | <instance-norm>
+
+<batch-norm> ::= 'batchnorm' '{' <axis> <momentum> '}'
+
+<layer-norm> ::= 'layernorm' '{' <axis> <epsilon> '}'
+
+<instance-norm> ::= 'instancenorm' '{' <axis> '}'
+
+# --- Hyperparameters definitions ---
+
+<units> ::= 'units' ':' <units-val>
+
+<filters> ::= 'filters' ':' <filter-val>
+
+<features> ::= 'features' ':' <whole-number>
+
+<heads> ::= 'heads' ':' <heads-val>
+
+<heads-val> ::= '1' | '2' | '4' | '8'
+
+<seq-length> ::= 'sequence_length' ':' <whole-number>
+
+<recurrent-dropout> ::= 'recurrent_dropout' ':' <float>
+
+<return-seq-on> ::= 'return_sequences' ':' 'True'
+
+<return-seq-off> ::= 'return_sequences' ':' 'False'
+
+<kernel-size> ::= 'kernel_size' ':' <kernel-size-val>
+
+<strides> ::= 'strides' ':' <whole-number>
+
+<padding> ::= 'padding' ':' 'causal' | 'same' | 'valid'
+
+<leak-rate> ::= 'leak_rate' ':' <float>
+
+<spectral-radius> ::= 'spectral_radius' ':' <float>
+
+<input-scaling> ::= 'input_scaling' ':' <float>
+
+<dilations> ::= 'dilations' ':' <dilation-list>
+
+<pool-size> ::= 'pool_size' ':' <pool-size-val>
+
+<pool-size-val> ::= '2' | '3' | '4'
+
+<pool-type> ::= 'type' ':' ('max' | 'avg')
+
+<activation> ::= 'activation' ':' <activation-fn>
+
+<activation-fn> ::= 'linear' | 'relu' | 'sigmoid' | 'tanh' | 'softmax' | 'swish' | 'gelu' | 'leaky_relu' | 'elu'
+
+<opt-dropout> ::= <dropout> | ''
+
+<dropout> ::= 'dropout' ':' <float>
+
+<opt-regularization> ::= <regularization> | ''
+
+<regularization> ::= 'l1' ':' <float> | 'l2' ':' <float> | 'l1' ':' <float> 'l2' ':' <float>
+
+<opt-weight-init> ::= <weight-init> | ''
+
+<weight-init> ::= 'kernel_initializer' ':' 'glorot_uniform' | 'glorot_normal' | 'he_uniform' | 'he_normal' | 'random_normal'
+
+<dilation-rate> ::= 'dilation_rate' ':' <whole-number>
+
+<dilation-list> ::= '[' <dilation-list-content> ']'
+
+<dilation-list-content> ::= <whole-number> | <whole-number> ',' <dilation-list-content>
+
+<axis> ::= 'axis' ':' <whole-number>
+
+<momentum> ::= 'momentum' ':' <float>
+
+<epsilon> ::= 'epsilon' ':' <float>
+
+# --- Basic data-types definitions ---
+
+<bool> ::= 'True' | 'False'
+
+<units-val> ::= '4' | '8' | '16' | '32' | '64' | '128' | '256' | '512' | '1024'
+
+<filter-val> ::= '16' | '32' | '64' | '128' | '256'
+
+<kernel-size-val> ::= '3' | '5' | '7' | '9' | '11'
+
+<whole-number> ::= '0' | <non-zero-digit> | <non-zero-digit> <digits>
+
+<non-zero-digit> ::= '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+
+<digits> ::= <digit> | <digit> <digits>
+
+<digit> ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+
+<float> ::= <whole-number> '.' <digits> | '0.' <digits>

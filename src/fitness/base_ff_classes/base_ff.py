@@ -11,8 +11,8 @@ class base_ff:
     be instantiated.
     """
 
-    # Default default fitness function is NaN.
-    default_fitness = np.NaN
+    # Default default fitness function is nan.
+    default_fitness = np.nan
 
     # Default fitness objective is to minimise fitness.
     maximise = False

@@ -58,8 +58,8 @@ def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
 
     try:
         # Separate out input (X) and output (y) data.
-        train_X = train_Xy[:, :-1] # all columns but last
-        train_y = train_Xy[:, -1]  # last column
+        train_X = train_Xy[3] 
+        train_y = train_Xy[3]
 
     except IndexError:
         s = "utilities.fitness.get_data.get_Xy_train_test_separate\n" \
@@ -73,8 +73,8 @@ def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
                                 delimiter=delimiter)
 
         # Separate out input (X) and output (y) data.
-        test_X = test_Xy[:, :-1] # all columns but last
-        test_y = test_Xy[:, -1]  # last column
+        test_X = test_Xy[3] # all columns but last
+        test_y = test_Xy[3]  # last column
 
     else:
         test_X, test_y = None, None
