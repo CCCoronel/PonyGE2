@@ -2,7 +2,8 @@ from fitness.base_ff_classes.base_ff import base_ff
 from utilities.fitness.get_data import get_data
 from algorithm.parameters import params
 from algorithm.mapper import map_tree_from_genome
-from representation.individual import Individual 
+from representation.individual import Individual
+import re
 
 class renewable_energy(base_ff):
     """
@@ -84,14 +85,33 @@ class renewable_energy(base_ff):
         """
         Avalia o indivíduo com base no RMSE do modelo gerado a partir do fenótipo.
         """
-
         ind = Individual(None, ind.tree, map_ind=True)
-        # Ensure the phenotype is correctly parsed
-        if ind.phenotype is None:
-            raise ValueError("O fenótipo do indivíduo não pôde ser analisado.")
-        # Here we assume the phenotype is a valid Python expression that can be evaluated
-        print("[DEBUG] Phenotype:", ind.phenotype)
-        # Evaluate the fitness of the phenotype
-        fitness = eval(ind.phenotype)
+        phenotype = ind.phenotype
+        
+        try:
+            # --- INÍCIO DA MODIFICAÇÃO ---
+            # Crie uma função para corrigir os números com espaços
+            def fix_numbers(p_str):
+                # Remove spaces around dots and between numbers
+                p_str = re.sub(r'\s*\.\s*', '.', p_str)
 
+                while re.search(r'(\d+)\s+(\d+)', p_str):
+                    p_str = re.sub(r'(\d+)\s+(\d+)', r'\1\2', p_str)
+                return p_str
+
+            # Limpe o fenótipo antes de avaliá-lo
+            clean_phenotype = fix_numbers(phenotype)
+            print(f"Fenótipo corrigido: {clean_phenotype}")
+            # --- FIM DA MODIFICAÇÃO ---
+            
+            # Use o fenótipo limpo no eval()
+            model = eval(clean_phenotype)
+            
+            # ... resto da sua lógica de fitness ...
+
+        except Exception as e:
+            # O log de erro agora pode mostrar tanto o fenótipo original quanto o limpo
+            print(f"Erro ao avaliar fenótipo.\nOriginal: {phenotype}\nLimpo: {clean_phenotype}\nErro: {e}")
+            fitness = 0.0
+            
         return fitness
