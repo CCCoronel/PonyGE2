@@ -1,91 +1,141 @@
 # --- Top Level ---
-# Gera uma chamada de função Python com uma lista de dicionários como argumento.
-<ann> ::= 'build_model([' <input-layer-py> ',' <hidden-layers-py> ',' <output-layer-py> '])'
+<ann> ::= 'neuralnet' '{' <input-layer> <hidden-layers> <output-layer> '}'
 
-# --- Input Layer (como Dicionário Python) ---
-<input-layer-py> ::= "{'type':'input'," <features-py> "," <seq-length-py> "}"
+# --- Input Layer ---
+<input-layer> ::= 'input' '{' <units> <features> <seq-length> '}'
 
-# --- Output Layer (como Dicionário Python) ---
-<output-layer-py> ::= "{'type':'output'," <units-py> "," <activation-py> <opt-dropout-py> "}"
+# --- Output Layer ---
+<output-layer> ::= 'output' '{' <units> <activation> <dropout>? '}'
 
-# --- Layer Definitions (com Vírgulas para listas) ---
-<hidden-layers-py> ::= <final-layer-py> | <stackable-layer-py> ',' <hidden-layers-py>
+# --- Layer Definitions ---
+<hidden-layers> ::= <final-layer> | <sequence-layer> <hidden-layers>
 
-# Camadas que podem ser empilhadas
-<stackable-layer-py> ::= <stackable-lstm-layer-py> | <stackable-gru-layer-py> | <conv1d-layer-py> | <dense-layer-py> | <normalization-layer-py> | <pooling-layer-py>
+# Layers that maintain sequence structure
+<sequence-layer> ::= <stackable-lstm-layer>
+                 | <stackable-gru-layer>
+                 | <conv1d-layer>
+                 | <tcn-layer>
+                 | <normalization-layer>
+                 | <regular-pooling>
 
-# Camadas que devem estar no final da pilha
-<final-layer-py> ::= <dense-layer-py> | <final-lstm-layer-py> | <final-gru-layer-py> | <conv1d-layer-py> | <tcn-layer-py> | <attention-layer-py> | <esn-layer-py>
+# Layers that can end the sequence or be final
+<final-layer> ::= <dense-layer>
+              | <final-lstm-layer>
+              | <final-gru-layer>
+              | <final-tcn-layer>
+              | <attention-layer>
+              | <esn-layer>
+              | <global-pooling>
 
-# --- Layer Implementations (como Dicionários Python) ---
-<dense-layer-py> ::= "{'type':'dense'," <units-py> "," <activation-py> <opt-dropout-py> <opt-regularization-py> <opt-weight-init-py> "}"
-<stackable-lstm-layer-py> ::= "{'type':'lstm'," <units-py> "," <activation-py> "," <return-seq-on-py> "," <recurrent-dropout-py> <opt-dropout-py> <opt-regularization-py> "}"
-<final-lstm-layer-py> ::= "{'type':'lstm'," <units-py> "," <activation-py> "," <return-seq-off-py> "," <recurrent-dropout-py> <opt-dropout-py> <opt-regularization-py> "}"
-<stackable-gru-layer-py> ::= "{'type':'gru'," <units-py> "," <activation-py> "," <return-seq-on-py> "," <recurrent-dropout-py> <opt-dropout-py> <opt-regularization-py> "}"
-<final-gru-layer-py> ::= "{'type':'gru'," <units-py> "," <activation-py> "," <return-seq-off-py> "," <recurrent-dropout-py> <opt-dropout-py> <opt-regularization-py> "}"
-<conv1d-layer-py> ::= "{'type':'conv1d'," <filters-py> "," <kernel-size-py> "," <strides-py> "," <padding-py> "," <dilation-rate-py> "," <activation-py> <opt-dropout-py> "}"
-<tcn-layer-py> ::= "{'type':'tcn'," <filters-py> "," <kernel-size-py> "," <dilations-py> "," <activation-py> <opt-dropout-py> "}"
-<attention-layer-py> ::= "{'type':'attention'," <units-py> "," <heads-py> <opt-dropout-py> "}"
-<esn-layer-py> ::= "{'type':'esn'," <units-py> "," <activation-py> "," <leak-rate-py> "," <spectral-radius-py> "," <input-scaling-py> "}"
+# --- Layer Implementations ---
+<dense-layer>          ::= 'dense' '{'
+                       <units> <activation> <dropout>?
+                       <regularization>? <weight-init>?
+                       '}'
+<stackable-lstm-layer> ::= 'lstm' '{'
+                       <units> <activation> <return-seq-on>
+                       <recurrent-dropout> <dropout>? <regularization>?
+                       '}'
+<final-lstm-layer>     ::= 'lstm' '{'
+                       <units> <activation> <return-seq-off>
+                       <recurrent-dropout> <dropout>? <regularization>?
+                       '}'
+<stackable-gru-layer>  ::= 'gru' '{'
+                       <units> <activation> <return-seq-on> <recurrent-dropout>
+                       <dropout>? <regularization>?
+                       '}'
+<final-gru-layer>      ::= 'gru' '{'
+                       <units> <activation> <return-seq-off>
+                       <recurrent-dropout> <dropout>? <regularization>?
+                       '}'
+<conv1d-layer>         ::= 'conv1d' '{'
+                       <filters> <kernel-size> <strides> <padding>
+                       <dilation-rate> <activation> <dropout>?
+                       '}'
+<tcn-layer>            ::= 'tcn' '{'
+                       <filters> <kernel-size> <dilations>
+                       <activation> <dropout>?
+                       '}'
+<final-tcn-layer>      ::= 'tcn' '{'
+                       <filters> <kernel-size> <dilations>
+                       <activation> <dropout>? 'return_sequences' '=' 'False'
+                       '}'
+<attention-layer>      ::= 'attention' '{' <units> <heads> <dropout>? '}'
+<esn-layer>            ::= 'esn' '{'
+                       <units> <activation> <leak-rate>
+                       <spectral-radius> <input-scaling>
+                       '}'
+<regular-pooling>      ::= <max-pooling> | <avg-pooling>
+<max-pooling>          ::= 'maxpool1d' '{' <pool-size> <strides> '}'
+<avg-pooling>          ::= 'avgpool1d' '{' <pool-size> <strides> '}'
+<global-pooling>       ::= 'globalpool' '{' <pool-type> '}'
+<normalization-layer>  ::= <batch-norm> | <layer-norm> | <instance-norm>
+<batch-norm>           ::= 'batchnorm' '{' <axis> <momentum> '}'
+<layer-norm>           ::= 'layernorm' '{' <axis> <epsilon> '}'
+<instance-norm>        ::= 'instancenorm' '{' <axis> '}'
 
-<pooling-layer-py> ::= <max-pooling-py> | <avg-pooling-py> | <global-pooling-py>
-<max-pooling-py> ::= "{'type':'maxpool1d'," <pool-size-py> "," <strides-py> "}"
-<avg-pooling-py> ::= "{'type':'avgpool1d'," <pool-size-py> "," <strides-py> "}"
-<global-pooling-py> ::= "{'type':'globalpool'," <pool-type-py> "}"
+# --- Hyperparameters definitions ---
+<units>                 ::= 'units' '=' <units-val>
+<filters>               ::= 'filters' '=' <filter-val>
+<features>              ::= 'features' '=' <features-val>
+<seq-length>            ::= 'sequence_length' '=' <seq-length-val>
+<heads>                 ::= 'heads' '=' <heads-val>
+<recurrent-dropout>     ::= 'recurrent_dropout' '=' <float>
+<return-seq-on>         ::= 'return_sequences' '=' 'True'
+<return-seq-off>        ::= 'return_sequences' '=' 'False'
+<kernel-size>           ::= 'kernel_size' '=' <kernel-size-val>
+<strides>               ::= 'strides' '=' <strides-val>
+<padding>               ::= 'padding' '=' ('causal' | 'same' | 'valid')
+<leak-rate>             ::= 'leak_rate' '=' <leak-rate-val>
+<spectral-radius>       ::= 'spectral_radius' '=' <spectral-radius-val>
+<input-scaling>         ::= 'input_scaling' '=' <input-scaling-val>
+<dilations>             ::= 'dilations' '=' '[' <dilation-list> ']'
+<pool-size>             ::= 'pool_size' '=' <pool-size-val>
+<pool-type>             ::= 'type' '=' ('max' | 'avg')
+<activation>            ::= 'activation' '=' <activation-fn>
+<activation-fn>         ::= 'linear' | 'relu' | 'sigmoid'
+                        | 'tanh' | 'softmax' | 'swish'
+                        | 'gelu' | 'leaky_relu' | 'elu'
+<dropout>               ::= 'dropout' '=' <dropout-val>
+<regularization>        ::= 'l1' '=' <regularization-val>
+                        | 'l2' '=' <regularization-val>
+                        | 'l1' '=' <regularization-val> 'l2' '=' <regularization-val>
+<weight-init>           ::= 'kernel_initializer' '=' ('glorot_uniform'
+                                                     | 'glorot_normal'
+                                                     | 'he_uniform'
+                                                     | 'he_normal'
+                                                     | 'random_normal')
+<dilation-rate>         ::= 'dilation_rate' '=' <dilation-rate-val>
+<dilation-list>         ::= <nonneg-int> ( ',' <nonneg-int> )*
+<axis>                  ::= 'axis' '=' <axis-val>
+<momentum>              ::= 'momentum' '=' <momentum-val>
+<epsilon>               ::= 'epsilon' '=' <epsilon-val>
 
-<normalization-layer-py> ::= <batch-norm-py> | <layer-norm-py> | <instance-norm-py>
-<batch-norm-py> ::= "{'type':'batchnorm'," <axis-py> "," <momentum-py> "}"
-<layer-norm-py> ::= "{'type':'layernorm'," <axis-py> "," <epsilon-py> "}"
-<instance-norm-py> ::= "{'type':'instancenorm'," <axis-py> "}"
+# --- Basic data-types definitions ---
+<nonneg-int>    ::= '0' | <nonzero-digit> <digit>+
+<digit>         ::= '0' | <nonzero-digit>
+<nonzero-digit> ::= '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+<int>           ::= <nonneg-int> | '-' <nonneg-int>
+<nonneg-float>  ::= <nonneg-int> '.' <digits> <exponent-part>?
+                | <nonneg-int> <exponent-part>?
+<exponent-part> ::= ('e' | 'E') ('+' | '-')? <nonneg-int>
+<float>         ::= <nonneg-float> | '-' <nonneg-float>
 
-# --- Hyperparameters (como pares chave-valor de Dicionário Python) ---
-<units-py> ::= "'units':" <units-val>
-<filters-py> ::= "'filters':" <filter-val>
-<features-py> ::= "'features':" <whole-number>
-<heads-py> ::= "'heads':" <heads-val>
-<seq-length-py> ::= "'sequence_length':" <whole-number>
-<recurrent-dropout-py> ::= "'recurrent_dropout':" <float>
-<return-seq-on-py> ::= "'return_sequences':True"
-<return-seq-off-py> ::= "'return_sequences':False"
-<kernel-size-py> ::= "'kernel_size':" <kernel-size-val>
-<strides-py> ::= "'strides':" <whole-number>
-<padding-py> ::= "'padding':'" <padding-val> "'"
-<padding-val> ::= 'causal' | 'same' | 'valid'
-<leak-rate-py> ::= "'leak_rate':" <float>
-<spectral-radius-py> ::= "'spectral_radius':" <float>
-<input-scaling-py> ::= "'input_scaling':" <float>
-<dilations-py> ::= "'dilations':" <dilation-list>
-<pool-size-py> ::= "'pool_size':" <pool-size-val>
-<pool-type-py> ::= "'type':'" <pool-type-val> "'"
-<pool-type-val> ::= 'max' | 'avg'
-<activation-py> ::= "'activation':'" <activation-fn> "'"
-
-# Parâmetros opcionais agora incluem uma vírgula inicial
-<opt-dropout-py> ::= ",'dropout':" <float> | ""
-<opt-regularization-py> ::= "," <regularization-py> | ""
-<regularization-py> ::= <l1-py> | <l2-py> | <l1-py> "," <l2-py>
-<l1-py> ::= "'l1':" <float>
-<l2-py> ::= "'l2':" <float>
-
-<opt-weight-init-py> ::= ",'kernel_initializer':'" <weight-init-val> "'" | ""
-<weight-init-val> ::= 'glorot_uniform' | 'glorot_normal' | 'he_uniform' | 'he_normal' | 'random_normal'
-
-<dilation-rate-py> ::= "'dilation_rate':" <whole-number>
-<axis-py> ::= "'axis':" <whole-number>
-<momentum-py> ::= "'momentum':" <float>
-<epsilon-py> ::= "'epsilon':" <float>
-
-# --- Definições que não precisam de alteração ---
-<dilation-list> ::= '[' <dilation-list-content> ']'
-<dilation-list-content> ::= <whole-number> | <whole-number> ',' <dilation-list-content>
-<activation-fn> ::= 'linear' | 'relu' | 'sigmoid' | 'tanh' | 'softmax' | 'swish' | 'gelu' | 'leaky_relu' | 'elu'
-<heads-val> ::= '1' | '2' | '4' | '8'
-<units-val> ::= '4' | '8' | '16' | '32' | '64' | '128' | '256' | '512' | '1024'
-<filter-val> ::= '16' | '32' | '64' | '128' | '256'
-<kernel-size-val> ::= '3' | '5' | '7' | '9' | '11'
-<pool-size-val> ::= '2' | '3' | '4'
-<whole-number> ::= '0' | <non-zero-digit> <digits>
-<non-zero-digit> ::= '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-<digits> ::= <digit> | <digit> <digits>
-<digit> ::= '0' | <non-zero-digit>
-<float> ::= <whole-number> '.' <digits> | '0.' <digits>
+# --- Specific values for hyperparameters ---
+<units-val>           ::= '4' | '8' | '16' | '32' | '64' | '128' | '256' | '512' | '1024'
+<filter-val>          ::= '16' | '32' | '64' | '128' | '256'
+<kernel-size-val>     ::= '3' | '5' | '7' | '9' | '11'
+<dropout-val>         ::= '0.0' | '0.1' | '0.2' | '0.3' | '0.4' | '0.5'
+<leak-rate-val>       ::= '0.1' | '0.2' | '0.3' | '0.4' | '0.5'
+<spectral-radius-val> ::= '0.5' | '0.7' | '0.9' | '0.95' | '0.99'
+<input-scaling-val>   ::= '0.1' | '0.5' | '1.0' | '1.5' | '2.0'
+<momentum-val>        ::= '0.9' | '0.95' | '0.99' | '0.999'
+<epsilon-val>         ::= '1e-8' | '1e-7' | '1e-6' | '1e-5'
+<strides-val>         ::= '1' | '2' | '3' | '4'
+<axis-val>            ::= '-1' | '0' | '1' | '2'
+<heads-val>           ::= '1' | '2' | '4' | '8' | '16'
+<features-val>        ::= '1' | '2' | '3' | '4' | '5' | '10' | '20' | '50'
+<seq-length-val>      ::= '10' | '20' | '30' | '50' | '100' | '200'
+<pool-size-val>       ::= '2' | '3' | '4' | '5'
+<dilation-rate-val>   ::= '1' | '2' | '4' | '8' | '16'
+<regularization-val>  ::= '0.001' | '0.01' | '0.1'
