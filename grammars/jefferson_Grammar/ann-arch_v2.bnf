@@ -1,0 +1,168 @@
+# --- Top Level ---
+<ann> ::= 'neuralnet' '{' <input-layer> <hidden-layers> <output-layer> '}'
+
+# --- Input Layer ---
+<input-layer> ::= 'input' '{' <units> <features> <seq-length> '}'
+
+# --- Output Layer ---
+<output-layer> ::= 'output' '{' <units> <activation> <dropout-optional> '}'
+
+# --- Layer Definitions ---
+<hidden-layers> ::= <final-layer> | <sequence-layer> <hidden-layers>
+
+# Layers that maintain sequence structure
+<sequence-layer> ::= <stackable-lstm-layer>
+                 | <stackable-gru-layer>
+                 | <conv1d-layer>
+                 | <tcn-layer>
+                 | <normalization-layer>
+                 | <regular-pooling>
+
+# Layers that can end the sequence or be final
+<final-layer> ::= <dense-layer>
+              | <final-lstm-layer>
+              | <final-gru-layer>
+              | <final-tcn-layer>
+              | <attention-layer>
+              | <esn-layer>
+              | <global-pooling>
+
+# --- Layer Implementations ---
+<dense-layer>          ::= 'dense' '{'
+                       <units> <activation> <dropout-optional>
+                       <regularization-optional> <weight-init-optional>'}'
+<stackable-lstm-layer> ::= 'lstm' '{'
+                       <units> <activation> <return-seq-on>
+                       <recurrent-dropout> <dropout-optional> <regularization-optional>
+                       '}'
+<final-lstm-layer>     ::= 'lstm' '{'
+                       <units> <activation> <return-seq-off>
+                       <recurrent-dropout> <dropout-optional> <regularization-optional>
+                       '}'
+<stackable-gru-layer>  ::= 'gru' '{'
+                       <units> <activation> <return-seq-on> <recurrent-dropout>
+                       <dropout-optional> <regularization-optional>
+                       '}'
+<final-gru-layer>      ::= 'gru' '{'
+                       <units> <activation> <return-seq-off>
+                       <recurrent-dropout> <dropout-optional> <regularization-optional>
+                       '}'
+<conv1d-layer>         ::= 'conv1d' '{'
+                       <filters> <kernel-size> <strides> <padding>
+                       <dilation-rate> <activation> <dropout-optional>
+                       '}'
+<tcn-layer>            ::= 'tcn' '{'
+                       <filters> <kernel-size> <dilations>
+                       <activation> <dropout-optional>
+                       '}'
+<final-tcn-layer>      ::= 'tcn' '{'
+                       <filters> <kernel-size> <dilations>
+                       <activation> <dropout-optional> 'return_sequences' '=' 'False'
+                       '}'
+<attention-layer>      ::= 'attention' '{' <units> <heads> <dropout-optional> '}'
+<esn-layer>            ::= 'esn' '{'
+                       <units> <activation> <leak-rate>
+                       <spectral-radius> <input-scaling>
+                       '}'
+<regular-pooling>      ::= <max-pooling> | <avg-pooling>
+<max-pooling>          ::= 'maxpool1d' '{' <pool-size> <strides> '}'
+<avg-pooling>          ::= 'avgpool1d' '{' <pool-size> <strides> '}'
+<global-pooling>       ::= 'globalpool' '{' <pool-type> '}'
+<normalization-layer>  ::= <batch-norm> | <layer-norm> | <instance-norm>
+<batch-norm>           ::= 'batchnorm' '{' <axis> <momentum> '}'
+<layer-norm>           ::= 'layernorm' '{' <axis> <epsilon> '}'
+<instance-norm>        ::= 'instancenorm' '{' <axis> '}'
+
+# --- Hyperparameters definitions ---
+<units>                 ::= 'units' '=' <units-val>
+<filters>               ::= 'filters' '=' <filter-val>
+<features>              ::= 'features' '=' <features-val>
+<seq-length>            ::= 'sequence_length' '=' <seq-length-val>
+<heads>                 ::= 'heads' '=' <heads-val>
+<recurrent-dropout>     ::= 'recurrent_dropout' '=' <float>
+<return-seq-on>         ::= 'return_sequences' '=' 'True'
+<return-seq-off>        ::= 'return_sequences' '=' 'False'
+<kernel-size>           ::= 'kernel_size' '=' <kernel-size-val>
+<strides>               ::= 'strides' '=' <strides-val>
+<padding>               ::= 'padding' '=' <padding-value>
+<leak-rate>             ::= 'leak_rate' '=' <leak-rate-val>
+<spectral-radius>       ::= 'spectral_radius' '=' <spectral-radius-val>
+<input-scaling>         ::= 'input_scaling' '=' <input-scaling-val>
+<dilations>             ::= 'dilations' '=' '[' <dilation-list> ']'
+<pool-size>             ::= 'pool_size' '=' <pool-size-val>
+<pool-type>             ::= 'type' '=' <pool-type-value>
+<activation>            ::= 'activation' '=' <activation-fn>
+<activation-fn>         ::= 'linear' | 'relu' | 'sigmoid'
+                        | 'tanh' | 'softmax' | 'swish'
+                        | 'gelu' | 'leaky_relu' | 'elu'
+<dropout>               ::= 'dropout' '=' <dropout-val>
+<regularization>        ::= 'l1' '=' <regularization-val>
+                        | 'l2' '=' <regularization-val>
+                        | 'l1' '=' <regularization-val> 'l2' '=' <regularization-val>
+<weight-init>           ::= 'kernel_initializer' '=' <kernel-initializer-value>
+<dilation-rate>         ::= 'dilation_rate' '=' <dilation-rate-val>
+<dilation-list>         ::= <nonneg-int> <comma-nonneg-int-list-star>
+<axis>                  ::= 'axis' '=' <axis-val>
+<momentum>              ::= 'momentum' '=' <momentum-val>
+<epsilon>               ::= 'epsilon' '=' <epsilon-val>
+
+# --- Basic data-types definitions ---
+<nonneg-int>    ::= '0' | <nonzero-digit> <digits-list-plus>
+<digits>         ::= '0' | <nonzero-digit>
+<nonzero-digit> ::= '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+<int>           ::= <nonneg-int> | '-' <nonneg-int>
+<nonneg-float>  ::= <nonneg-int> '.' <digits-list-plus> <exponent-part-optional>
+                | <nonneg-int> <exponent-part-optional>
+<exponent-part> ::= <exponent-char> <plus-minus-optional> <nonneg-int>
+<float>         ::= <nonneg-float> | '-' <nonneg-float>
+
+# --- Specific values for hyperparameters ---
+<units-val>           ::= '4' | '8' | '16' | '32' | '64' | '128' | '256' | '512' | '1024'
+<filter-val>          ::= '16' | '32' | '64' | '128' | '256'
+<kernel-size-val>     ::= '3' | '5' | '7' | '9' | '11'
+<dropout-val>         ::= '0.0' | '0.1' | '0.2' | '0.3' | '0.4' | '0.5'
+<leak-rate-val>       ::= '0.1' | '0.2' | '0.3' | '0.4' | '0.5'
+<spectral-radius-val> ::= '0.5' | '0.7' | '0.9' | '0.95' | '0.99'
+<input-scaling-val>   ::= '0.1' | '0.5' | '1.0' | '1.5' | '2.0'
+<momentum-val>        ::= '0.9' | '0.95' | '0.99' | '0.999'
+<epsilon-val>         ::= '1e-8' | '1e-7' | '1e-6' | '1e-5'
+<strides-val>         ::= '1' | '2' | '3' | '4'
+<axis-val>            ::= '-1' | '0' | '1' | '2'
+<heads-val>           ::= '1' | '2' | '4' | '8' | '16'
+<features-val>        ::= '1' | '2' | '3' | '4' | '5' | '10' | '20' | '50'
+<seq-length-val>      ::= '10' | '20' | '30' | '50' | '100' | '200'
+<pool-size-val>       ::= '2' | '3' | '4' | '5'
+<dilation-rate-val>   ::= '1' | '2' | '4' | '8' | '16'
+<regularization-val>  ::= '0.001' | '0.01' | '0.1'
+
+### --- Auxiliary BNF Rules ---
+
+# converção do EBNF '(A | B)')
+<padding-value>            ::= 'causal' 
+                               | 'same' 
+                               | 'valid'
+<pool-type-value>          ::= 'max' | 'avg'
+<kernel-initializer-value> ::= 'glorot_uniform' 
+                               | 'glorot_normal'
+                               | 'he_uniform' 
+                               | 'he_normal'
+                               | 'random_normal'
+<exponent-char>            ::= 'e' | 'E'
+<sign-char>                ::= '+' | '-'
+
+# Converção do EBNF 'X?'
+<dropout-optional>         ::= <dropout> | <empty>
+<regularization-optional>  ::= <regularization> | <empty>
+<weight-init-optional>     ::= <weight-init> | <empty>
+<exponent-part-optional>   ::= <exponent-part> | <empty>
+<plus-minus-optional>      ::= <sign-char> | <empty> # Refere-se ao novo <sign-char>
+
+# Converção do EBNF 'X*'
+<comma-nonneg-int-list-star> ::= ',' <nonneg-int> <comma-nonneg-int-list-star> | <empty>
+
+# Converção do EBNF 'X+'
+<digits-list-plus> ::= <digits> <digits-list-plus> | <digits>
+
+# --- Empty definition ---
+# Represents the empty string (epsilon/lambda)
+<empty> ::= ''
