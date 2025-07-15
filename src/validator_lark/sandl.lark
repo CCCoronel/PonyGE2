@@ -1,0 +1,172 @@
+// SANDL Grammar v.0.6.2 - Corrigida para iteração
+// by Jefferson O. Andrade -- 2025
+
+start: ann
+
+ann: NEURALNET "{" input_layer hidden_layer+ output_layer "}"
+
+input_layer: INPUT "{" (input_param ";")* "}"
+
+output_layer: OUTPUT "{" (output_param ";")* "}"
+
+hidden_layer: layer_type "{" (layer_param ";")* "}"
+
+input_param: FEATURES GETS INT
+           | SEQUENCE_LENGTH GETS INT
+
+output_param: UNITS GETS INT
+            | ACTIVATION GETS activation_fn
+            | DROPOUT GETS FLOAT
+
+// AJUSTADO: Alternativas agrupadas com parênteses
+activation_fn: (LINEAR
+             | RELU
+             | SIGMOID
+             | TANH
+             | SOFTMAX
+             | SWISH
+             | GELU
+             | LEAKY_RELU
+             | ELU)
+
+// AJUSTADO: Alternativas agrupadas com parênteses
+layer_type: (DENSE
+          | LSTM
+          | GRU
+          | CONV1D
+          | TCN
+          | ATTENTION
+          | ESN
+          | MAX_POOLING
+          | AVG_POOLING
+          | GLOBAL_POOLING
+          | BATCH_NORM
+          | LAYER_NORM
+          | INSTANCE_NORM)
+
+// AJUSTADO: Alternativas agrupadas com parênteses
+layer_param: (ACTIVATION GETS activation_fn
+           | DROPOUT GETS FLOAT
+           | L1 GETS FLOAT
+           | L2 GETS FLOAT
+           | KERNEL_INIT GETS kernel_initializer
+           | UNITS GETS INT
+           | FILTERS GETS INT
+           | FEATURES GETS INT
+           | SEQUENCE_LENGTH GETS INT
+           | HEADS GETS INT
+           | RECURRENT_DROPOUT GETS FLOAT
+           | KERNEL_SIZE GETS INT
+           | STRIDES GETS INT
+           | PADDING GETS (CAUSAL | SAME | VALID) // Já estava correto
+           | LEAK_RATE GETS FLOAT
+           | SPECTRAL_RADIUS GETS FLOAT
+           | INPUT_SCALING GETS FLOAT
+           | DILATIONS GETS dilation_list
+           | POOL_SIZE GETS INT
+           | POOL_TYPE GETS ( MIN | MAX | AVG ) // Já estava correto
+           | DILATION_RATE GETS INT
+           | AXIS GETS INT
+           | MOMENTUM GETS FLOAT
+           | EPSILON GETS FLOAT)
+
+// AJUSTADO: Alternativas agrupadas com parênteses
+kernel_initializer: (GLOROT_UNIFORM
+                  | GLOROT_NORMAL
+                  | HE_UNIFORM
+                  | HE_NORMAL
+                  | RANDOM_NORMAL)
+
+dilation_list: "[" INT (COMMA INT)* "]"
+
+// --- Terminais e Regras Auxiliares ---
+
+NEURALNET: "neuralnet"
+INPUT:     "input"
+OUTPUT:    "output"
+
+// Activation Functions
+LINEAR:     "linear"
+RELU:       "relu"
+SIGMOID:    "sigmoid"
+TANH:       "tanh"
+SOFTMAX:    "softmax"
+SWISH:      "swish"
+GELU:       "gelu"
+LEAKY_RELU: "leaky_relu"
+ELU:        "elu"
+
+// Type os hidden layers
+DENSE:          "dense"
+LSTM:           "lstm"
+GRU:            "gru"
+CONV1D:         "conv1d"
+TCN:            "tcn"
+ATTENTION:      "attention"
+ESN:            "esn"
+MAX_POOLING:    "max_pooling"
+AVG_POOLING:    "avg_pooling"
+GLOBAL_POOLING: "global_pooling"
+BATCH_NORM:     "batch_norm"
+LAYER_NORM:     "layer_norm"
+INSTANCE_NORM:  "instance_norm"
+
+// Hyper-parameters
+ACTIVATION:         "activation"
+AXIS:               "axis"
+DILATIONS:          "dilations"
+DILATION_RATE:      "dilation_rate"
+DROPOUT:            "dropout"
+EPSILON:            "epsilon"
+FEATURES:           "features"
+FILTERS:            "filters"
+HEADS:              "heads"
+INPUT_SCALING:      "input_scaling"
+KERNEL_INIT:        "kernel_init"
+KERNEL_SIZE:        "kernel_size"
+L1:                 "l1"
+L2:                 "l2"
+LEAK_RATE:          "leak_rate"
+MOMENTUM:           "momentum"
+PADDING:            "padding"
+POOL_SIZE:          "pool_size"
+POOL_TYPE:          "pool_type"
+RECURRENT_DROPOUT:  "recurrent_dropout"
+SEQUENCE_LENGTH:    "sequence_length"
+SPECTRAL_RADIUS:    "spectral_radius"
+STRIDES:            "strides"
+UNITS:              "units"
+
+// Kernel initializers
+GLOROT_UNIFORM: "glorot_uniform"
+GLOROT_NORMAL:  "glorot_normal"
+HE_UNIFORM:     "he_uniform"
+HE_NORMAL:      "he_normal"
+RANDOM_NORMAL:  "random_normal"
+
+// Padding type
+CAUSAL: "causal"
+SAME:   "same"
+VALID:  "valid"
+
+// Pool types
+AVG: "avg"
+MAX: "max"
+MIN: "min"
+
+GETS:  "="
+COMMA: ","
+
+%import common.INT
+%import common.FLOAT
+%import common.WS
+
+%ignore WS
+
+// --- Seção de Comentários ---
+BLOCK_COMMENT: /\{-[\s\S]*?\-\}/
+SL_COMMENT: /--[^\n]*/
+_COMMENT: SL_COMMENT | BLOCK_COMMENT
+%ignore _COMMENT
+
+// --- Fim da gramática ---

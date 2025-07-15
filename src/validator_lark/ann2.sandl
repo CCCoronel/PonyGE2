@@ -1,0 +1,17 @@
+neuralnet {
+    input {
+        features = 10;
+        sequence_length = 10;
+    }
+    dense {
+        units = 128;
+        activation = tanh;
+        dropout = 0.3;
+        l2 = 0.001;
+        kernel_init = glorot_normal;
+    }
+    output {
+        units = 1024;
+        activation = leaky_relu;
+    } 
+}

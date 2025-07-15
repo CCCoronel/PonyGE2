@@ -1,0 +1,18 @@
+neuralnet {
+    input {
+        features = 10;
+        sequence_length = 30;
+    }
+    gru {
+        units = 1024;
+        recurrent_dropout = -0.22;
+        activation = gelu;
+        dropout = 0.3;
+        l2 = 0.1;
+    }
+    output {
+        units = 32;
+        activation = swish;
+        dropout = 0.0;
+    }
+}

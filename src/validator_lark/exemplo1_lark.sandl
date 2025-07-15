@@ -1,0 +1,15 @@
+neuralnet {
+    input {
+        features = 10;
+        sequence_length = 30;
+    }
+    instance_norm {
+        epsilon = 1e-07;
+    }
+    output {
+        units = 512;
+        activation = elu;
+        dropout = 0.156;
+    }
+}
+

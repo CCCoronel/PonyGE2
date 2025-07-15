@@ -1,0 +1,7 @@
+neuralnet {
+    input {
+        sequence_length = 30;} dense {
+        strides = 1;
+         spectral_radius = 0.99;} attention {}   output {
+        dropout = 0.2;
+         activation = softmax;}}
