@@ -1,12 +1,13 @@
 import argparse
 import random
 import re
-from typing import Dict, List, Any
+from typing import Dict, List, Set
 
 class SANDLGenerator:
     """
-    Gera arquiteturas de redes neurais aleatórias baseadas em uma gramática BNF
-    preparada para Evolução Gramatical.
+    Gera arquiteturas de redes neurais aleatórias baseadas em uma gramática BNF.
+    Esta versão inclui lógica interna para garantir a geração de parâmetros mais
+    ricos e formatação correta sem modificar a gramática original.
     """
 
     def __init__(self, grammar_filepath: str):
@@ -35,49 +36,101 @@ class SANDLGenerator:
                 grammar[non_terminal] = choices
         return grammar
 
+    def _get_indent(self) -> str:
+        """Retorna a string de indentação para o nível atual."""
+        return "    " * self.indent_level
+
+    def _generate_managed_params(self, symbol: str, depth: int, max_depth: int) -> str:
+        """
+        Gera uma lista rica e bem formatada de parâmetros para um tipo de camada,
+        ignorando a recursão 'vazia' da gramática.
+        """
+        params_to_generate = []
+        
+        if symbol == '<input_params>':
+            params_to_generate = self.grammar.get('<input_param>', [])
+        
+        elif symbol == '<output_params>':
+            possible = self.grammar.get('<output_param>', [])
+            # Garante 'units' e 'activation'
+            params_to_generate = [p for p in possible if '<units_param>' in p or '<activation_param>' in p]
+            # Adiciona talvez um dropout opcional
+            if random.random() > 0.5:
+                dropout_param = next((p for p in possible if '<dropout_param>' in p), None)
+                if dropout_param:
+                    params_to_generate.append(dropout_param)
+
+        elif symbol == '<layer_params>':
+            possible_params = self.grammar.get('<layer_param>', [])
+            if not possible_params: return ""
+            num_to_generate = random.randint(2, min(5, len(possible_params)))
+            params_to_generate = random.sample(possible_params, num_to_generate)
+
+        if not params_to_generate:
+            return ""
+
+        # Expande cada parâmetro escolhido
+        expanded_params = [self._expand(p[0], depth, max_depth) for p in params_to_generate]
+
+        # Formata a lista em uma string final com ponto e vírgula e quebras de linha
+        output_parts = []
+        for i, p_str in enumerate(expanded_params):
+            output_parts.append(p_str + ";")
+            # Se não for o último, adiciona quebra de linha e indentação para o próximo
+            if i < len(expanded_params) - 1:
+                output_parts.append("\n" + self._get_indent())
+        
+        return "".join(output_parts)
+
     def _expand(self, symbol: str, depth: int, max_depth: int) -> str:
-        """Expande recursivamente um símbolo da gramática, controlando a profundidade."""
+        """Expande recursivamente um símbolo da gramática, com formatação e lógica de geração especial."""
+        # Delega a geração de listas de parâmetros para a lógica gerenciada
+        if symbol in ['<input_params>', '<output_params>', '<layer_params>']:
+            return self._generate_managed_params(symbol, depth, max_depth)
+            
         if symbol not in self.grammar:
             return symbol.strip('"')
 
+        # Lógica de controle de profundidade
         is_recursive = any(symbol in p for p in self.grammar[symbol])
-
         if is_recursive and depth >= max_depth:
             non_recursive_productions = [p for p in self.grammar[symbol] if symbol not in p]
-            if not non_recursive_productions:
-                return ""
+            if not non_recursive_productions: return ""
             production = random.choice(non_recursive_productions)
         else:
             production = random.choice(self.grammar[symbol])
 
-        if production == ['<<empty>>']:
-            return ""
+        if production == ['<<empty>>']: return ""
 
         parts = []
         for part_symbol in production:
-            new_depth = depth + 1 if part_symbol == symbol else depth
-            
-            # Lógica de formatação para legibilidade
             if part_symbol == '"{"':
                 self.indent_level += 1
+                if parts and parts[-1] == " ": parts.pop()
                 parts.append(" {\n" + self._get_indent())
+                continue
+
             elif part_symbol == '"}"':
                 self.indent_level -= 1
-                if parts and parts[-1].strip() == "": parts.pop()
                 parts.append("\n" + self._get_indent() + "}")
-            elif part_symbol == '";"':
-                if parts and parts[-1].endswith(" "):
-                    parts[-1] = parts[-1].strip()
-                parts.append(";\n" + self._get_indent())
-            else:
-                expanded_part = self._expand(part_symbol, new_depth, max_depth)
-                if expanded_part:
-                    parts.append(expanded_part + " ")
+                continue
+
+            # O ponto e vírgula agora é tratado pela _generate_managed_params
+            if part_symbol == '";"': continue
+
+            expanded_part = self._expand(part_symbol, depth + 1 if part_symbol == symbol else depth, max_depth)
+
+            if expanded_part:
+                # --- LÓGICA DE FORMATAÇÃO CORRIGIDA ---
+                prefix = ""
+                # Se o último item adicionado foi um bloco '}', o próximo deve
+                # começar em uma nova linha com a indentação correta.
+                if parts and parts[-1].strip().endswith('}'):
+                    prefix = "\n" + self._get_indent()
+                
+                parts.append(prefix + expanded_part)
 
         return "".join(parts)
-
-    def _get_indent(self) -> str:
-        return "    " * self.indent_level
 
     def generate(self, max_depth: int = 15) -> str:
         """Gera e formata uma definição de arquitetura SANDL completa."""
@@ -87,15 +140,13 @@ class SANDLGenerator:
         self.indent_level = 0
         raw_output = self._expand('<ann>', 0, max_depth)
         
-        # Pós-processamento para limpar a formatação
-        clean_output = re.sub(r'\s+([;{}])', r'\1', raw_output)
-        clean_output = re.sub(r'(\w)({)', r'\1 \2', clean_output)
-        clean_output = "\n".join(line for line in clean_output.split('\n') if line.strip())
-
+        # O pós-processamento agora é mais simples
+        lines = [line.rstrip() for line in raw_output.split('\n')]
+        clean_output = "\n".join(line for line in lines if line.strip())
+        
         return clean_output
 
-
-# --- Para Executar o Programa ---
+# --- Bloco de Execução Principal (sem alterações) ---
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Gera uma arquitetura SANDL aleatória e a salva em um arquivo."
@@ -105,7 +156,6 @@ if __name__ == "__main__":
         type=str,
         help="O caminho para o arquivo .bnf contendo a gramática SANDL."
     )
-    # --- ALTERAÇÃO 1: Adicionado argumento para o arquivo de saída ---
     parser.add_argument(
         "--output-file",
         type=str,
@@ -133,20 +183,15 @@ if __name__ == "__main__":
 
     try:
         generator = SANDLGenerator(args.grammar_file)
-
-        # Gera a arquitetura
         random_architecture = generator.generate(max_depth=args.max_depth)
         
-        # --- ALTERAÇÃO 2: Bloco para salvar o arquivo ---
         try:
             with open(args.output_file, 'w', encoding='utf-8') as f:
                 f.write(random_architecture)
             print(f"INFO: Arquitetura salva com sucesso em '{args.output_file}'")
         except IOError as e:
             print(f"ERRO: Não foi possível escrever no arquivo '{args.output_file}': {e}")
-        # --- Fim da Alteração 2 ---
 
-        # Imprime a saída no terminal como antes
         print("\n--- Arquitetura Gerada (SANDL) ---")
         print(random_architecture)
         print("\n" + "-"*45)
