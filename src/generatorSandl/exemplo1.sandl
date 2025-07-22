@@ -1,17 +1,35 @@
 neuralnet {
     input {
-        features=20;
-        sequence_length=50;
+        features=100;
+        sequence_length=100;
     }
     global_pooling {
-        dropout=0.5;
-        activation=elu;
-        l1=0.01;
         filters=64;
-        heads=2;
+        momentum=0.9;
+        dropout=0.2;
+        epsilon=1e-5;
+    }
+    conv1d {
+        dilation_rate=2;
+        activation=elu;
+        leak_rate=0.3;
+        momentum=0.99;
+        pool_size=4;
+    }
+    attention {
+        spectral_radius=0.95;
+        pool_type=min;
+        activation=linear;
+    }
+    layer_norm {
+        l1=0.01;
+        leak_rate=0.3;
+        activation=gelu;
+        recurrent_dropout=0.5;
+        dilation_rate=8;
     }
     output {
-        units=32;
-        activation=relu;
+        units=128;
+        activation=linear;
     }
 }
