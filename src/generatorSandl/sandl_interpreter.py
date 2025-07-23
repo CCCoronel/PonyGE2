@@ -161,22 +161,32 @@ class SANDLInterpreter(Transformer):
     def output_param(self, items): return (items[0].type.lower(), items[2])
     
     # Transforma regras de camada em dicionários
-    def input_layer(self, items): return dict(items[2:-1])
-    def output_layer(self, items): return dict(items[2:-1])
-    def hidden_layer(self, items):
-        layer_type = items[0] # Agora recebe a string "dense", "lstm", etc.
-        params = dict(items[2:-1])
-        params['type'] = layer_type
-        return params
+    def input_layer(self, items):
+        params = [item for item in items if isinstance(item, tuple)]
+        return dict(params)
 
-    # Transforma a regra raiz no dicionário final
+    def output_layer(self, items):
+        params = [item for item in items if isinstance(item, tuple)]
+        return dict(params)
+
+    def hidden_layer(self, items):
+        layer_type = items[0]
+        params_list = [item for item in items if isinstance(item, tuple)]
+        params_dict = dict(params_list)
+        params_dict['type'] = layer_type
+        return params_dict
+
+    # CÓDIGO CORRIGIDO para o método ann
     def ann(self, items):
+        # items[0] é o token NEURALNET
+        # items[1] é o dicionário da camada de entrada
+        # items[-1] é o dicionário da camada de saída
+        # O que estiver no meio são as camadas ocultas
         return {
-            "input_layer": items[2],
-            "hidden_layers": list(items[3:-2]),
-            "output_layer": items[-2]
+            "input_layer": items[1],
+            "hidden_layers": items[2:-1],  # Pega a fatia do meio
+            "output_layer": items[-1]
         }
-    
     def start(self, items): return items[0]
 
 # Função principal (run_interpreter) permanece a mesma.

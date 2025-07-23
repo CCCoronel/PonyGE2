@@ -2,7 +2,6 @@ SEARCH_LOOP:                search_loop
 STEP:                       step
 POPULATION_SIZE:            50
 GENERATIONS:                20
-FITNESS_FUNCTION:           supervised_learning.renewable_energy
 DATASET_TRAIN:              RenewableEnergy/train.csv
 DATASET_TEST:               RenewableEnergy/test.csv
 GRAMMAR_FILE:               renewable_energy/ann-arch.bnf
