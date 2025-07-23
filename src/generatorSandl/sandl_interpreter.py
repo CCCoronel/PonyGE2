@@ -202,46 +202,46 @@ def run_interpreter(grammar_filepath: str, sandl_filepath: str):
 
         print("1. Verificando a sintaxe...")
         parsed_tree = lark_parser.parse(sandl_content)
-        print("   ✅ Sintaxe está correta.")
+        print("  Sintaxe está correta.")
 
         print("2. Verificando a semântica (regras e valores)...")
         validator = SemanticValidator()
         validator.visit(parsed_tree)
 
         if validator.errors:
-            print("   ❌ Encontrados erros semânticos. A interpretação foi abortada.")
+            print("  Encontrados erros semânticos. A interpretação foi abortada.")
             for error in sorted(validator.errors):
                 print(f"     - {error}")
             print("\n" + "="*30 + "\nARQUIVO SANDL INVÁLIDO\n" + "="*30)
             return
         
-        print("   ✅ Semântica está correta.")
+        print("  Semântica está correta.")
 
         print("3. Interpretando a arquitetura...")
         interpreter = SANDLInterpreter()
         model_dict = interpreter.transform(parsed_tree)
-        print("   ✅ Interpretação concluída.")
+        print("Interpretação concluída.")
         
         print("\n" + "="*50)
-        print("🎉 ARQUIVO VÁLIDO E INTERPRETADO COM SUCESSO 🎉")
+        print("ARQUIVO VÁLIDO E INTERPRETADO COM SUCESSO")
         print("--- Representação do Modelo em Python ---")
         print(json.dumps(model_dict, indent=4))
         print("="*50)
 
     except FileNotFoundError as e:
-        print(f"\n❌ ERRO FATAL: Arquivo não encontrado: {e.filename}")
+        print(f"\nERRO FATAL: Arquivo não encontrado: {e.filename}")
     except LarkError as e:
         if hasattr(e, 'orig_exc') and isinstance(e.orig_exc, (AttributeError, TypeError)):
-            print(f"\n❌ ERRO DE INTERPRETAÇÃO: {e.orig_exc}")
+            print(f"\nERRO DE INTERPRETAÇÃO: {e.orig_exc}")
             print("   Verifique se todos os métodos de transformação estão implementados na classe SANDLInterpreter.")
         else:
-            print(f"\n❌ ERRO DE SINTAXE: {e}")
+            print(f"\nERRO DE SINTAXE: {e}")
         print("\n" + "="*30 + "\nARQUIVO SANDL INVÁLIDO\n" + "="*30)
 
     except Exception as e:
         import traceback
         traceback.print_exc()
-        print(f"\n❌ ERRO INESPERADO: {e}")
+        print(f"\nERRO INESPERADO: {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Valida e interpreta um arquivo .sandl.")
