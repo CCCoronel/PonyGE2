@@ -77,5 +77,6 @@ class SANDLFitness(base_ff):
             fitness_value = min(history.history['val_root_mean_squared_error'])
             return fitness_value
 
-        except Exception:
+        except Exception as e:
+            print(f"ERRO ao avaliar o fenótipo: {e}")
             return float('inf')
