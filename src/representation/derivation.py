@@ -193,6 +193,8 @@ def legal_productions(method, depth_limit, root, productions):
             # the grammar + 1. We have to be careful in selecting available
             # production choices lest we generate a tree which violates the
             # depth limit.
+            
+
             available = [prod for prod in productions if prod['max_path'] ==
                          depth_limit - 1]
 
