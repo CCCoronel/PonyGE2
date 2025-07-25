@@ -25,6 +25,7 @@ def search_loop():
     # Initialise population
     individuals = initialisation(params['POPULATION_SIZE'])
 
+
     # Evaluate initial population
     individuals = evaluate_fitness(individuals)
 

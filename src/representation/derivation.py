@@ -6,6 +6,8 @@ from utilities.representation.check_methods import get_nodes_and_depth, \
     ret_true
 
 
+recstackcall: int = 0
+
 def generate_tree(tree, genome, output, method, nodes, depth, max_depth,
                   depth_limit):
     """
@@ -43,6 +45,7 @@ def generate_tree(tree, genome, output, method, nodes, depth, max_depth,
     available = legal_productions(method, remaining_depth, tree.root,
                                   productions['choices'])
 
+    print(f"INFO (Derivation): Available productions for '{tree.root}'\n at depth {depth}:\n {available}")
     # Randomly pick a production choice and make a codon with it.
     chosen_prod = choice(available)
     codon = generate_codon(chosen_prod, productions)
@@ -66,6 +69,7 @@ def generate_tree(tree, genome, output, method, nodes, depth, max_depth,
         elif symbol["type"] == "NT":
             # The symbol is a non-terminal. Append new node to children.
             tree.children.append(Tree(symbol["symbol"], tree))
+            print(symbol["symbol"])
 
             # recurse on the new node.
             genome, output, nodes, d, max_depth = \
@@ -163,6 +167,8 @@ def legal_productions(method, depth_limit, root, productions):
     elif method == "full":
         # Build a "full" tree where every branch extends to the depth limit.
 
+        print("EU FUI CHAMADO", end="")
+
         if not depth_limit:
             # There is no depth limit specified for building a Full tree.
             # Raise an error as a depth limit HAS to be specified here.
@@ -171,6 +177,7 @@ def legal_productions(method, depth_limit, root, productions):
             raise Exception(s)
 
         elif depth_limit > params['BNF_GRAMMAR'].max_arity + 1:
+            print(": DEPTH LIMIT MAIOR QUE ARITY")
             # If the depth limit is greater than the maximum arity of the
             # grammar, then only recursive production choices can be used.
             available = root_info['recursive']
@@ -181,6 +188,7 @@ def legal_productions(method, depth_limit, root, productions):
                 available = productions
 
         else:
+            print(": FIM")
             # The depth limit is less than or equal to the maximum arity of
             # the grammar + 1. We have to be careful in selecting available
             # production choices lest we generate a tree which violates the
@@ -194,6 +202,9 @@ def legal_productions(method, depth_limit, root, productions):
                 # paths that don't violate the limit.
                 available = [prod for prod in productions if prod['max_path']
                              < depth_limit - 1]
+                
+                for prod in productions:
+                    print("PRODUCAO", prod['max_path'], depth_limit)
 
     return available
 

@@ -8,7 +8,7 @@ from lark import Lark, Tree, Visitor, Transformer, LarkError, Token
 # Tenta importar as regras de validação de um arquivo separado.
 # Este arquivo é crucial para a validação semântica.
 try:
-    from valid_layerparams import VALID_LAYER_PARAMS
+    from .valid_layer_params import VALID_LAYER_PARAMS
 except ImportError:
     print("ERRO FATAL: O arquivo 'valid_layer_params.py' não foi encontrado.")
     print("Certifique-se de que ele existe no mesmo diretório e contém um dicionário chamado VALID_LAYER_PARAMS.")

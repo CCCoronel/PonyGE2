@@ -282,10 +282,25 @@ class Grammar(object):
             for edge in graph:
                 # Find edges which either connect to terminals or nodes
                 # which are fully expanded.
+
+                flag = True
+                for sy in edge[1]:
+                    print('DEBUG', sy['type'], sy['symbol'])
+                    if(sy["type"] != "T"):
+                        if(sy["symbol"] == "<<empty>"):
+                            sy["symbol"] = "<<empty>>"
+
+                        if(self.non_terminals[sy["symbol"]]['expanded']):
+                            flag = False
+                if(flag):
+                    removeset.add(edge[0])
+                
+                """
                 if all([sy["type"] == "T" or
                         self.non_terminals[sy["symbol"]]['expanded']
                         for sy in edge[1]]):
                     removeset.add(edge[0])
+                """
 
             for s in removeset:
                 # These NTs are now expanded and have their correct minimum
@@ -363,7 +378,7 @@ class Grammar(object):
         # a T from any NT.
         self.max_arity = max(self.non_terminals[NT]['min_steps']
                              for NT in self.non_terminals)
-
+        
         # Add the minimum terminal path to each production rule.
         for rule in self.rules:
             for choice in self.rules[rule]['choices']:

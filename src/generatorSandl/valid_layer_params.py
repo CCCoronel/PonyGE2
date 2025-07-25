@@ -107,7 +107,3 @@ def is_param_valid_for_layer(layer_type: str, param: str) -> bool:
         return param in VALID_LAYER_PARAMS[layer_type]
     return False
 
-# Testes de exemplo
-print(f"É 'units' válido para 'dense'? {is_param_valid_for_layer('dense', 'units')}")
-print(f"É 'strides' válido para 'lstm'? {is_param_valid_for_layer('lstm', 'strides')}")
-

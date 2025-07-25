@@ -146,6 +146,21 @@ class SANDLGenerator:
         
         return clean_output
 
+def generate_single_architecture(grammar_path: str, seed: int = None, max_depth: int = 15) -> str:
+    """
+    Instancia o gerador e produz uma única arquitetura SANDL.
+    """
+    if seed is not None:
+        random.seed(seed)
+    
+    try:
+        generator = SANDLGenerator(grammar_path)
+        architecture = generator.generate(max_depth=max_depth)
+        return architecture
+    except Exception as e:
+        print(f"ERRO durante a geração da arquitetura: {e}")
+        return ""
+    
 # --- Bloco de Execução Principal (sem alterações) ---
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

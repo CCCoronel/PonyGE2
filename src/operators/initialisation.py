@@ -206,12 +206,14 @@ def rhh(size):
             # Iterate over number of required individuals per depth.
             for i in range(times):
                 # Generate individual using "Grow"
+                print("=================================== RANDOM ===================================")
                 ind = generate_ind_tree(depth, "random")
 
                 # Append individual to population
                 population.append(ind)
 
                 # Generate individual using "Full"
+                print("=================================== FULL ===================================")
                 ind = generate_ind_tree(depth, "full")
 
                 # Append individual to population
@@ -322,8 +324,16 @@ def generate_ind_tree(max_depth, method):
     ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
-    genome, output, nodes, _, depth = generate_tree(ind_tree, [], [], method,
-                                                    0, 0, 0, max_depth)
+    genome, output, nodes, _, depth = generate_tree(
+            tree=ind_tree,
+            genome=[],
+            output=[],
+            method=method,
+            nodes=0,
+            depth=0,
+            max_depth=0,
+            depth_limit=max_depth
+        )
 
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
@@ -340,6 +350,7 @@ def generate_ind_tree(max_depth, method):
     ind.phenotype, ind.nodes = phenotype, nodes
     ind.depth, ind.used_codons, ind.invalid = depth, used_cod, invalid
 
+    print("INDIVÍDIO", ind)
     # Generate random tail for genome.
     ind.genome = genome + [randint(0, params['CODON_SIZE']) for
                            _ in range(int(ind.used_codons / 2))]
