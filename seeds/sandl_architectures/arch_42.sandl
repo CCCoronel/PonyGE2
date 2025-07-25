@@ -1,0 +1,17 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=50;
+    }
+    global_pooling {
+        dropout=0.5;
+        activation=elu;
+        l1=0.01;
+        filters=64;
+        heads=2;
+    }
+    output {
+        units=32;
+        activation=relu;
+    }
+}

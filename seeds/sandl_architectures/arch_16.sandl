@@ -1,0 +1,20 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=50;
+    }
+    esn {
+        heads=4;
+        momentum=0.99;
+        activation=linear;
+        kernel_size=7;
+    }
+    instance_norm {
+        input_scaling=0.5;
+        axis=1;
+    }
+    output {
+        units=64;
+        activation=gelu;
+    }
+}

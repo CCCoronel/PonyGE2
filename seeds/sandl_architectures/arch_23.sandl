@@ -1,0 +1,34 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=200;
+    }
+    layer_norm {
+        recurrent_dropout=0.5;
+        input_scaling=0.5;
+        activation=relu;
+    }
+    dense {
+        padding=valid;
+        dropout=0.3;
+        filters=64;
+        dilation_rate=1;
+        epsilon=1e-5;
+    }
+    batch_norm {
+        units=256;
+        pool_type=min;
+        strides=2;
+    }
+    global_pooling {
+        dilation_rate=4;
+        strides=1;
+        l2=0.01;
+        padding=valid;
+    }
+    output {
+        units=32;
+        activation=elu;
+        dropout=0.5;
+    }
+}

@@ -1,0 +1,24 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=100;
+    }
+    global_pooling {
+        dilation_rate=8;
+        epsilon=1e-7;
+    }
+    dense {
+        padding=same;
+        input_scaling=1.5;
+    }
+    conv1d {
+        activation=sigmoid;
+        units=256;
+        strides=2;
+    }
+    output {
+        units=256;
+        activation=swish;
+        dropout=0.2;
+    }
+}

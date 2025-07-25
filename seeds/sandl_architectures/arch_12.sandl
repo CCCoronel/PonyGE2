@@ -1,0 +1,28 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=30;
+    }
+    tcn {
+        axis=1;
+        heads=2;
+        pool_type=min;
+        activation=tanh;
+        epsilon=1e-7;
+    }
+    dense {
+        epsilon=1e-5;
+        pool_size=3;
+    }
+    gru {
+        axis=-1;
+        pool_type=avg;
+        units=512;
+        dropout=0.4;
+    }
+    output {
+        units=32;
+        activation=swish;
+        dropout=0.4;
+    }
+}

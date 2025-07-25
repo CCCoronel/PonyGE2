@@ -1,0 +1,22 @@
+neuralnet {
+    input {
+        features=10;
+        sequence_length=50;
+    }
+    attention {
+        recurrent_dropout=0.4;
+        dilations=[4,8];
+    }
+    instance_norm {
+        recurrent_dropout=0.1;
+        input_scaling=1.5;
+        l2=0.0001;
+        filters=128;
+        momentum=0.99;
+    }
+    output {
+        units=256;
+        activation=softmax;
+        dropout=0.5;
+    }
+}

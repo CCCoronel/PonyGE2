@@ -1,0 +1,16 @@
+neuralnet {
+    input {
+        features=10;
+        sequence_length=100;
+    }
+    tcn {
+        l2=0.001;
+        dilation_rate=1;
+        pool_size=4;
+        kernel_init=glorot_uniform;
+    }
+    output {
+        units=128;
+        activation=softmax;
+    }
+}

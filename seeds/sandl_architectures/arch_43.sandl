@@ -1,0 +1,19 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=30;
+    }
+    global_pooling {
+        pool_size=4;
+        spectral_radius=0.95;
+    }
+    lstm {
+        leak_rate=0.1;
+        kernel_init=glorot_normal;
+    }
+    output {
+        units=256;
+        activation=gelu;
+        dropout=0.1;
+    }
+}

@@ -1,0 +1,27 @@
+neuralnet {
+    input {
+        features=10;
+        sequence_length=200;
+    }
+    batch_norm {
+        dropout=0.1;
+        pool_size=4;
+        dilations=[8,4];
+    }
+    batch_norm {
+        input_scaling=0.5;
+        units=32;
+        epsilon=1e-7;
+        kernel_size=3;
+    }
+    conv1d {
+        pool_type=max;
+        padding=causal;
+        heads=2;
+        strides=2;
+    }
+    output {
+        units=64;
+        activation=elu;
+    }
+}

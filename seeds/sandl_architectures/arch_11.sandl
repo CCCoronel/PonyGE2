@@ -1,0 +1,16 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=200;
+    }
+    max_pooling {
+        kernel_init=random_normal;
+        l1=0.001;
+        pool_type=avg;
+        momentum=0.99;
+    }
+    output {
+        units=32;
+        activation=leaky_relu;
+    }
+}

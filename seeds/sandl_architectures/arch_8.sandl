@@ -1,0 +1,15 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=30;
+    }
+    conv1d {
+        leak_rate=0.2;
+        momentum=0.95;
+        activation=tanh;
+    }
+    output {
+        units=16;
+        activation=elu;
+    }
+}

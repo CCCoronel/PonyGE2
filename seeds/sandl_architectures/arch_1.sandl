@@ -1,0 +1,21 @@
+neuralnet {
+    input {
+        features=10;
+        sequence_length=200;
+    }
+    instance_norm {
+        l2=0.001;
+        dilations=[4,1];
+        activation=linear;
+    }
+    esn {
+        spectral_radius=0.95;
+        activation=elu;
+        pool_size=3;
+    }
+    output {
+        units=64;
+        activation=gelu;
+        dropout=0.2;
+    }
+}

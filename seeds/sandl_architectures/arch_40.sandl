@@ -1,0 +1,24 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=50;
+    }
+    layer_norm {
+        activation=leaky_relu;
+        pool_size=2;
+        kernel_init=glorot_uniform;
+        dropout=0.3;
+        momentum=0.99;
+    }
+    dense {
+        strides=2;
+        heads=8;
+        kernel_init=random_normal;
+        kernel_size=9;
+    }
+    output {
+        units=256;
+        activation=linear;
+        dropout=0.4;
+    }
+}

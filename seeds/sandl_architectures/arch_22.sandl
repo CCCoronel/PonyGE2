@@ -1,0 +1,23 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=30;
+    }
+    conv1d {
+        dropout=0.1;
+        strides=2;
+        axis=1;
+        units=32;
+    }
+    layer_norm {
+        axis=1;
+        strides=2;
+        recurrent_dropout=0.2;
+        units=16;
+    }
+    output {
+        units=128;
+        activation=elu;
+        dropout=0.5;
+    }
+}

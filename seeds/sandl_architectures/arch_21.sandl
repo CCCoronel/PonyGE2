@@ -1,0 +1,28 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=50;
+    }
+    avg_pooling {
+        activation=relu;
+        padding=causal;
+        dilation_rate=1;
+    }
+    global_pooling {
+        dropout=0.1;
+        strides=1;
+        pool_type=min;
+        dilations=[4];
+        l2=0.01;
+    }
+    max_pooling {
+        l1=0.01;
+        filters=128;
+        epsilon=1e-7;
+    }
+    output {
+        units=64;
+        activation=leaky_relu;
+        dropout=0.3;
+    }
+}

@@ -1,0 +1,21 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=200;
+    }
+    layer_norm {
+        input_scaling=1.5;
+        kernel_init=he_uniform;
+        dropout=0.5;
+        l1=0.0001;
+        spectral_radius=0.99;
+    }
+    lstm {
+        activation=relu;
+        momentum=0.9;
+    }
+    output {
+        units=16;
+        activation=tanh;
+    }
+}

@@ -1,0 +1,21 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=30;
+    }
+    tcn {
+        l2=0.01;
+        dilation_rate=8;
+        epsilon=1e-5;
+        filters=128;
+        pool_size=2;
+    }
+    lstm {
+        leak_rate=0.3;
+        dilation_rate=1;
+    }
+    output {
+        units=128;
+        activation=gelu;
+    }
+}

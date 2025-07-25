@@ -1,0 +1,16 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=100;
+    }
+    lstm {
+        spectral_radius=0.95;
+        strides=1;
+        recurrent_dropout=0.2;
+        l2=0.0001;
+    }
+    output {
+        units=16;
+        activation=linear;
+    }
+}

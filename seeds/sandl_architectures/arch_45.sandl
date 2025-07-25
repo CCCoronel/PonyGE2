@@ -1,0 +1,23 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=100;
+    }
+    lstm {
+        activation=sigmoid;
+        l2=0.0001;
+        kernel_size=5;
+        momentum=0.9;
+        dropout=0.2;
+    }
+    gru {
+        recurrent_dropout=0.1;
+        padding=same;
+        strides=2;
+        l2=0.0001;
+    }
+    output {
+        units=32;
+        activation=sigmoid;
+    }
+}

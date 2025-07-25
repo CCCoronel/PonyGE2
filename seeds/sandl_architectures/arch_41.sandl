@@ -1,0 +1,25 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=100;
+    }
+    layer_norm {
+        heads=8;
+        epsilon=1e-5;
+    }
+    tcn {
+        l2=0.001;
+        dilation_rate=2;
+    }
+    layer_norm {
+        kernel_init=glorot_normal;
+        pool_type=min;
+        epsilon=1e-7;
+        activation=linear;
+        l2=0.001;
+    }
+    output {
+        units=16;
+        activation=gelu;
+    }
+}

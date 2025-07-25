@@ -1,0 +1,14 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=100;
+    }
+    conv1d {
+        kernel_init=he_uniform;
+        padding=causal;
+    }
+    output {
+        units=256;
+        activation=relu;
+    }
+}

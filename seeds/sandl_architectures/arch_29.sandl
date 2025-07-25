@@ -1,0 +1,38 @@
+neuralnet {
+    input {
+        features=10;
+        sequence_length=200;
+    }
+    dense {
+        input_scaling=1.0;
+        momentum=0.95;
+    }
+    layer_norm {
+        input_scaling=1.0;
+        units=256;
+        heads=4;
+    }
+    esn {
+        pool_size=3;
+        kernel_init=he_uniform;
+        kernel_size=7;
+        dilation_rate=4;
+        momentum=0.99;
+    }
+    esn {
+        input_scaling=1.5;
+        kernel_size=7;
+        axis=-1;
+        epsilon=1e-7;
+        kernel_init=he_normal;
+    }
+    dense {
+        dropout=0.1;
+        momentum=0.99;
+    }
+    output {
+        units=32;
+        activation=leaky_relu;
+        dropout=0.2;
+    }
+}

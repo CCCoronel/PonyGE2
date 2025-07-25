@@ -1,0 +1,17 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=30;
+    }
+    attention {
+        heads=1;
+        leak_rate=0.2;
+        pool_type=min;
+        l2=0.01;
+        dilation_rate=2;
+    }
+    output {
+        units=16;
+        activation=tanh;
+    }
+}

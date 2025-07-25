@@ -1,0 +1,15 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=100;
+    }
+    lstm {
+        l2=0.0001;
+        units=256;
+    }
+    output {
+        units=64;
+        activation=swish;
+        dropout=0.5;
+    }
+}

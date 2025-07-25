@@ -1,0 +1,18 @@
+neuralnet {
+    input {
+        features=10;
+        sequence_length=30;
+    }
+    gru {
+        dropout=0.5;
+        momentum=0.95;
+        pool_type=min;
+        pool_size=2;
+        heads=8;
+    }
+    output {
+        units=512;
+        activation=linear;
+        dropout=0.5;
+    }
+}

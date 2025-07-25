@@ -1,0 +1,24 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=100;
+    }
+    tcn {
+        kernel_size=9;
+        spectral_radius=0.99;
+    }
+    attention {
+        l2=0.01;
+        dropout=0.3;
+        strides=2;
+    }
+    attention {
+        padding=valid;
+        pool_size=3;
+    }
+    output {
+        units=64;
+        activation=relu;
+        dropout=0.1;
+    }
+}

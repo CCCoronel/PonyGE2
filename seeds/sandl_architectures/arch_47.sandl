@@ -1,0 +1,38 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=100;
+    }
+    global_pooling {
+        spectral_radius=0.9;
+        epsilon=1e-7;
+    }
+    attention {
+        heads=4;
+        pool_size=4;
+        padding=causal;
+        input_scaling=0.5;
+        dropout=0.1;
+    }
+    avg_pooling {
+        l2=0.001;
+        momentum=0.95;
+        heads=4;
+        strides=2;
+    }
+    max_pooling {
+        dilation_rate=1;
+        leak_rate=0.2;
+        recurrent_dropout=0.3;
+        pool_size=3;
+    }
+    avg_pooling {
+        l1=0.001;
+        recurrent_dropout=0.1;
+    }
+    output {
+        units=512;
+        activation=linear;
+        dropout=0.2;
+    }
+}

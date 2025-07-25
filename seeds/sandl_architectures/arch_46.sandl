@@ -1,0 +1,16 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=30;
+    }
+    instance_norm {
+        momentum=0.99;
+        dropout=0.1;
+        activation=leaky_relu;
+        kernel_init=glorot_normal;
+    }
+    output {
+        units=128;
+        activation=gelu;
+    }
+}

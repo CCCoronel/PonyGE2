@@ -1,0 +1,25 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=30;
+    }
+    global_pooling {
+        strides=2;
+        pool_type=avg;
+    }
+    gru {
+        heads=1;
+        dropout=0.1;
+        l2=0.01;
+    }
+    lstm {
+        filters=32;
+        leak_rate=0.2;
+        recurrent_dropout=0.4;
+        strides=1;
+    }
+    output {
+        units=256;
+        activation=relu;
+    }
+}

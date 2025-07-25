@@ -1,0 +1,16 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=200;
+    }
+    lstm {
+        pool_size=4;
+        strides=1;
+        dropout=0.4;
+        dilations=[2];
+    }
+    output {
+        units=256;
+        activation=sigmoid;
+    }
+}

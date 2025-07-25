@@ -1,0 +1,20 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=30;
+    }
+    avg_pooling {
+        filters=128;
+        dilations=[2];
+        pool_type=avg;
+    }
+    instance_norm {
+        kernel_size=9;
+        activation=gelu;
+    }
+    output {
+        units=32;
+        activation=relu;
+        dropout=0.2;
+    }
+}

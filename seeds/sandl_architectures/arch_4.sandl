@@ -1,0 +1,17 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=50;
+    }
+    dense {
+        pool_type=max;
+        kernel_size=3;
+        dropout=0.2;
+        heads=4;
+        pool_size=2;
+    }
+    output {
+        units=16;
+        activation=gelu;
+    }
+}

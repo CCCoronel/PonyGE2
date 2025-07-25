@@ -1,0 +1,16 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=30;
+    }
+    layer_norm {
+        heads=4;
+        l2=0.001;
+        strides=1;
+        input_scaling=1.0;
+    }
+    output {
+        units=32;
+        activation=gelu;
+    }
+}

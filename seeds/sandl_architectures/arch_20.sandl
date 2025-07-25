@@ -1,0 +1,20 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=30;
+    }
+    lstm {
+        kernel_init=random_normal;
+        strides=2;
+    }
+    attention {
+        strides=2;
+        spectral_radius=0.9;
+        l1=0.01;
+        momentum=0.9;
+    }
+    output {
+        units=64;
+        activation=sigmoid;
+    }
+}

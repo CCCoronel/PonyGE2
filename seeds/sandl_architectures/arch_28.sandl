@@ -1,0 +1,20 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=200;
+    }
+    conv1d {
+        leak_rate=0.1;
+        units=128;
+        kernel_init=glorot_uniform;
+    }
+    attention {
+        units=256;
+        pool_size=4;
+        epsilon=1e-5;
+    }
+    output {
+        units=512;
+        activation=relu;
+    }
+}

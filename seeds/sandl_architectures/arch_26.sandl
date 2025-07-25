@@ -1,0 +1,18 @@
+neuralnet {
+    input {
+        features=10;
+        sequence_length=200;
+    }
+    batch_norm {
+        heads=2;
+        spectral_radius=0.9;
+        filters=128;
+        activation=tanh;
+        epsilon=1e-5;
+    }
+    output {
+        units=256;
+        activation=linear;
+        dropout=0.5;
+    }
+}

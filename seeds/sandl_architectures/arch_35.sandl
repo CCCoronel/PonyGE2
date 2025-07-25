@@ -1,0 +1,38 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=200;
+    }
+    layer_norm {
+        momentum=0.9;
+        padding=causal;
+        dilation_rate=4;
+        l2=0.001;
+    }
+    dense {
+        strides=1;
+        l1=0.001;
+        units=16;
+    }
+    global_pooling {
+        epsilon=1e-7;
+        kernel_init=he_normal;
+    }
+    tcn {
+        pool_size=4;
+        pool_type=min;
+        dropout=0.4;
+        l2=0.01;
+        epsilon=1e-7;
+    }
+    global_pooling {
+        heads=1;
+        dilation_rate=1;
+        units=16;
+    }
+    output {
+        units=256;
+        activation=leaky_relu;
+        dropout=0.5;
+    }
+}

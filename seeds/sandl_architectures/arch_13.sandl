@@ -1,0 +1,16 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=50;
+    }
+    lstm {
+        kernel_size=3;
+        activation=sigmoid;
+        spectral_radius=0.95;
+    }
+    output {
+        units=64;
+        activation=tanh;
+        dropout=0.5;
+    }
+}

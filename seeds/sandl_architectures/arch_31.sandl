@@ -1,0 +1,16 @@
+neuralnet {
+    input {
+        features=100;
+        sequence_length=30;
+    }
+    avg_pooling {
+        kernel_init=glorot_normal;
+        dropout=0.5;
+        epsilon=1e-7;
+    }
+    output {
+        units=16;
+        activation=gelu;
+        dropout=0.2;
+    }
+}

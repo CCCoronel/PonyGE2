@@ -1,0 +1,36 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=200;
+    }
+    lstm {
+        activation=swish;
+        pool_size=3;
+        heads=2;
+        l1=0.001;
+        units=512;
+    }
+    global_pooling {
+        kernel_size=5;
+        kernel_init=glorot_uniform;
+        recurrent_dropout=0.4;
+        pool_size=2;
+        l1=0.001;
+    }
+    batch_norm {
+        pool_size=3;
+        strides=2;
+        l1=0.001;
+        activation=sigmoid;
+    }
+    avg_pooling {
+        spectral_radius=0.95;
+        epsilon=1e-7;
+        heads=8;
+        filters=128;
+    }
+    output {
+        units=512;
+        activation=softmax;
+    }
+}

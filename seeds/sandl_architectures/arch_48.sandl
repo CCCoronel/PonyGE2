@@ -1,0 +1,15 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=50;
+    }
+    max_pooling {
+        filters=128;
+        pool_size=2;
+        pool_type=max;
+    }
+    output {
+        units=32;
+        activation=elu;
+    }
+}

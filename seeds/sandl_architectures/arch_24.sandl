@@ -1,0 +1,17 @@
+neuralnet {
+    input {
+        features=20;
+        sequence_length=50;
+    }
+    instance_norm {
+        activation=elu;
+        input_scaling=1.0;
+        momentum=0.99;
+        l2=0.001;
+    }
+    output {
+        units=256;
+        activation=swish;
+        dropout=0.1;
+    }
+}

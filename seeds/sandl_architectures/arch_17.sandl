@@ -1,0 +1,17 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=100;
+    }
+    conv1d {
+        spectral_radius=0.9;
+        recurrent_dropout=0.2;
+        pool_size=2;
+        strides=2;
+        momentum=0.99;
+    }
+    output {
+        units=256;
+        activation=sigmoid;
+    }
+}

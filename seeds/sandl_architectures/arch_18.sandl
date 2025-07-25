@@ -1,0 +1,30 @@
+neuralnet {
+    input {
+        features=50;
+        sequence_length=50;
+    }
+    gru {
+        kernel_size=5;
+        input_scaling=0.5;
+        recurrent_dropout=0.2;
+        filters=32;
+        l2=0.01;
+    }
+    dense {
+        leak_rate=0.2;
+        heads=1;
+        pool_type=max;
+        padding=same;
+    }
+    conv1d {
+        kernel_init=glorot_normal;
+        spectral_radius=0.99;
+        pool_size=4;
+        dilations=[8,8,8,2,4,8,2,8];
+        dilation_rate=2;
+    }
+    output {
+        units=512;
+        activation=swish;
+    }
+}
