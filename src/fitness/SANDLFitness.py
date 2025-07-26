@@ -55,7 +55,7 @@ class SANDLFitness(base_ff):
             validator = SemanticValidator()
             validator.visit(parsed_tree)
             if validator.errors:
-                # print(f"ERRO: Fenótipo inválido - {validator.errors}")
+                print(f"ERRO: Fenótipo inválido - {validator.errors}")
                 return float('inf')
 
             # print("INFO (Fitness): Fenótipo validado com sucesso.")
@@ -72,15 +72,11 @@ class SANDLFitness(base_ff):
                 metrics=[tf.keras.metrics.RootMeanSquaredError()]
             )
 
-            a = input("KERAS FIT")
-            print(individual.phenotype)
             history = keras_model.fit(
                 self.X_train, self.y_train, epochs=self.epochs,
                 batch_size=self.batch_size,
                 validation_data=(self.X_test, self.y_test), verbose=0
             )
-            print("KERAS MODEL: ", keras_model)
-            a = input("KERAS FIT DONE")
             
             # 4. Retorno do Fitness
             fitness_value = min(history.history['val_root_mean_squared_error'])
@@ -89,5 +85,5 @@ class SANDLFitness(base_ff):
             return fitness_value
         
         except Exception as e:
-            # print(f"ERRO ao avaliar o fenótipo: {e}")
+            print(f"ERRO ao avaliar o fenótipo: {e}")
             return float('inf')
