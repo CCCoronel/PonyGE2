@@ -1,0 +1,115 @@
+# SANDL Grammar for Time Series Neural Networks - Grammatical Evolution
+# Adapted from SANDL v0.6.4 for use with PonyGE2
+# Focus: Time series prediction with recurrent and dense layers
+
+<neuralnet> ::= neuralnet { <input_layer> <hidden_layers> <output_layer> }
+
+# Input layer - specialized for time series
+<input_layer> ::= input { <input_params> }
+
+<input_params> ::= features = <features> ; <sequence_params>
+                 | features = <features> ;
+
+<sequence_params> ::= sequence_length = <sequence_length> ;
+
+<features> ::= <small_int>
+<sequence_length> ::= <medium_int>
+
+# Hidden layers - multiple layers with different types
+<hidden_layers> ::= <hidden_layer>
+                  | <hidden_layer> <hidden_layers>
+
+<hidden_layer> ::= <recurrent_layer>
+                 | <dense_layer>
+                 | <normalization_layer>
+                 | <regularization_layer>
+
+# Recurrent layers - core for time series
+<recurrent_layer> ::= <lstm_layer>
+                    | <gru_layer>
+
+<lstm_layer> ::= lstm { <lstm_params> }
+
+<lstm_params> ::= units = <medium_int> ; <lstm_optional_params>
+                | units = <medium_int> ;
+
+<lstm_optional_params> ::= <lstm_optional_param>
+                         | <lstm_optional_param> <lstm_optional_params>
+
+<lstm_optional_param> ::= activation = <activation> ;
+                        | dropout = <dropout_rate> ;
+                        | recurrent_dropout = <dropout_rate> ;
+
+<gru_layer> ::= gru { <gru_params> }
+
+<gru_params> ::= units = <medium_int> ; <gru_optional_params>
+               | units = <medium_int> ;
+
+<gru_optional_params> ::= <gru_optional_param>
+                        | <gru_optional_param> <gru_optional_params>
+
+<gru_optional_param> ::= activation = <activation> ;
+                       | dropout = <dropout_rate> ;
+                       | recurrent_dropout = <dropout_rate> ;
+
+# Dense layers
+<dense_layer> ::= dense { <dense_params> }
+
+<dense_params> ::= units = <medium_int> ; <dense_optional_params>
+                 | units = <medium_int> ;
+
+<dense_optional_params> ::= <dense_optional_param>
+                          | <dense_optional_param> <dense_optional_params>
+
+<dense_optional_param> ::= activation = <activation> ;
+                         | dropout = <dropout_rate> ;
+                         | l1 = <regularization_rate> ;
+                         | l2 = <regularization_rate> ;
+
+# Normalization layers
+<normalization_layer> ::= <batch_norm_layer>
+                        | <layer_norm_layer>
+
+<batch_norm_layer> ::= batch_norm { }
+
+<layer_norm_layer> ::= layer_norm { }
+
+# Regularization layers
+<regularization_layer> ::= <dropout_layer>
+
+<dropout_layer> ::= dropout { rate = <dropout_rate> ; }
+
+# Output layer
+<output_layer> ::= output { <output_params> }
+
+<output_params> ::= units = <output_units> ; <output_optional_params>
+                  | units = <output_units> ;
+
+<output_optional_params> ::= activation = <output_activation> ;
+
+<output_units> ::= 1
+                 | <small_int>
+
+# Activation functions
+<activation> ::= relu
+               | tanh
+               | sigmoid
+               | linear
+               | swish
+               | gelu
+               | leaky_relu
+               | elu
+
+<output_activation> ::= linear
+                      | sigmoid
+                      | tanh
+                      | softmax
+
+# Numeric parameters
+<small_int> ::= 8 | 16 | 32 | 64 | 128
+<medium_int> ::= 16 | 32 | 64 | 128 | 256 | 512
+<large_int> ::= 64 | 128 | 256 | 512 | 1024
+
+<dropout_rate> ::= 0.1 | 0.2 | 0.3 | 0.4 | 0.5
+<regularization_rate> ::= 0.001 | 0.01 | 0.1
+

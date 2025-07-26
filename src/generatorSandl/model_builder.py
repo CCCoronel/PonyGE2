@@ -1,11 +1,9 @@
-# Arquivo: model_builder.py
-# Constrói modelos Keras/TensorFlow a partir da representação de dicionário do SANDL.
-
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+import tensorflow_addons as tfa  # Importando o tensorflow_addons
 
-# Mapeamento completo dos nomes de camadas do SANDL para as classes de camadas do Keras.
+# Mapeamento completo dos nomes de camadas do SANDL para as classes de camadas do Keras e TensorFlow Addons.
 # Isso garante que todas as arquiteturas geradas pela gramática possam ser construídas.
 LAYER_MAPPING = {
     # Camadas Padrão
@@ -19,21 +17,21 @@ LAYER_MAPPING = {
     "conv1d": layers.Conv1D,
     
     # Camadas de Atenção
-    "attention": layers.Attention, # Nota: Attention pode requerer uso mais complexo
+    "attention": layers.Attention,  # Nota: Attention pode requerer uso mais complexo
     
     # Camadas de Pooling
     "max_pooling": layers.MaxPooling1D,
     "avg_pooling": layers.AveragePooling1D,
-    "global_pooling": layers.GlobalAveragePooling1D, # Uma escolha comum para "global_pooling"
+    "global_pooling": layers.GlobalAveragePooling1D,  # Uma escolha comum para "global_pooling"
     
     # Camadas de Normalização
     "batch_norm": layers.BatchNormalization,
     "layer_norm": layers.LayerNormalization,
-    "instance_norm": None,  # Não existe nativamente no Keras. Requer tf-addons.
+    "instance_norm": tfa.layers.InstanceNormalization,  # Usando a camada InstanceNormalization do tensorflow-addons
     
     # Camadas mais complexas ou customizadas (Exemplos)
-    "tcn": None, # Temporal Convolutional Network - Geralmente é uma sequência de outras camadas.
-    "esn": None, # Echo State Network - Requer uma implementação customizada.
+    "tcn": None,  # Temporal Convolutional Network - Geralmente é uma sequência de outras camadas.
+    "esn": None,  # Echo State Network - Requer uma implementação customizada.
 }
 
 def build_model_from_dict(model_dict: dict) -> keras.Model:
@@ -49,7 +47,7 @@ def build_model_from_dict(model_dict: dict) -> keras.Model:
     input_shape = None
     if 'features' in input_params:
         # O formato para camadas recorrentes/convolucionais é (timesteps, features)
-        sequence_length = input_params.get('sequence_length') # Pode ser None
+        sequence_length = input_params.get('sequence_length')  # Pode ser None
         features = input_params['features']
         input_shape = (sequence_length, features)
 
@@ -74,9 +72,9 @@ def build_model_from_dict(model_dict: dict) -> keras.Model:
             model.add(LayerClass(**params))
         
         elif layer_type_name == "instance_norm":
-            print("AVISO: 'instance_norm' não é uma camada Keras nativa e foi ignorada. Considere usar a biblioteca 'tensorflow-addons'.")
-            continue # Pula para a próxima camada
-        
+            print("AVISO: 'instance_norm' está sendo configurado para usar a camada do tensorflow-addons (tfa.layers.InstanceNormalization).")
+            continue  # Continuar para a próxima camada
+
         else:
             # Lança um erro se a camada for desconhecida ou não implementada
             raise ValueError(f"Tipo de camada desconhecido ou não implementado no construtor: '{layer_type_name}'")

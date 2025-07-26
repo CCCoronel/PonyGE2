@@ -167,7 +167,6 @@ def legal_productions(method, depth_limit, root, productions):
     elif method == "full":
         # Build a "full" tree where every branch extends to the depth limit.
 
-
         if not depth_limit:
             # There is no depth limit specified for building a Full tree.
             # Raise an error as a depth limit HAS to be specified here.
