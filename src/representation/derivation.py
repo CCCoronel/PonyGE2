@@ -42,6 +42,8 @@ def generate_tree(tree, genome, output, method, nodes, depth, max_depth,
         remaining_depth = depth_limit
 
     # Find which productions can be used based on the derivation method.
+    if(remaining_depth <= 1):
+        return genome, output, nodes, depth, max_depth
     available = legal_productions(method, remaining_depth, tree.root,
                                   productions['choices'])
 
@@ -184,14 +186,20 @@ def legal_productions(method, depth_limit, root, productions):
                 available = productions
 
         else:
+<<<<<<< HEAD
+=======
+            print(": FIM")
+            print(params['BNF_GRAMMAR'].max_arity)
+>>>>>>> 32a53fdf201e98ceeac17a292009c22171d756c2
             # The depth limit is less than or equal to the maximum arity of
             # the grammar + 1. We have to be careful in selecting available
             # production choices lest we generate a tree which violates the
             # depth limit.
-            
 
             available = [prod for prod in productions if prod['max_path'] ==
                          depth_limit - 1]
+            
+            print([prod['max_path'] for prod in productions])
 
             if not available:
                 # There are no available choices which extend exactly to the
